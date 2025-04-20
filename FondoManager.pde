@@ -30,12 +30,12 @@ class FondoManager {
     imagenActual = 0;
     opacidad = 255;
     opacidadObjetivo = 255;
-    velocidadTransicion = 10;
+    velocidadTransicion = 1000; // Velocidad de transición en milisegundos
   }
   
   void actualizar(float nivelGraves, boolean hayBeatGraves) {
     // Actualizar la opacidad gradualmente
-    opacidad = lerp(opacidad, opacidadObjetivo, 0.1);
+    opacidad = lerp(opacidad, opacidadObjetivo, 0.4);
     
     // Cambiar de imagen cuando hay un beat de graves
     if (hayBeatGraves) {

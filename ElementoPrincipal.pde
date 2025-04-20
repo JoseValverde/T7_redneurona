@@ -31,7 +31,7 @@ class ElementoPrincipal extends ElementoBase {
   
   private void conectarUltimoNivel() {
     // Si hay menos de 2 elementos en el último nivel, no hay nada que conectar
-    if (ultimoNivel.size() < 2) return;
+    if (ultimoNivel.size() < 3) return;
     
     // Conectar cada elemento con algunos otros elementos del mismo nivel
     for (int i = 0; i < ultimoNivel.size(); i++) {
@@ -63,34 +63,40 @@ class ElementoPrincipal extends ElementoBase {
     
     // Calcular separación base según el nivel de profundidad
     // Más separación en los niveles superiores, menos en los niveles profundos
-    float separacionBase = 200 + (profundidadMax - profundidadActual) * 50;
+    float separacionBase = 150 + (profundidadMax - profundidadActual) * 30;
     
     // Flag para saber si estamos en el último nivel de profundidad
     boolean esUltimoNivel = (profundidadActual == profundidadMax - 1);
     
+    // Calcular ángulo base para distribución más uniforme
+    float anguloBase = TWO_PI / hijosPorNodo;
+    
     for (int i = 0; i < hijosPorNodo; i++) {
       // Distribuir los hijos de forma más uniforme usando ángulos
-      float angulo = TWO_PI / hijosPorNodo * i + random(-0.5, 0.5);
-      float distancia = separacionBase + random(-20, 20);
+      float angulo = anguloBase * i + random(-0.2, 0.2);
+      float distancia = separacionBase + random(-10, 10);
       
-      // Crear variación de posición más amplia basada en ángulos para mejor distribución espacial
+      // Crear variación de posición más controlada
+      float alturaZ = random(-separacionBase/3, separacionBase/3);
       PVector variacion = new PVector(
         cos(angulo) * distancia,
         sin(angulo) * distancia,
-        random(-separacionBase/2, separacionBase/2)
+        alturaZ + profundidadActual * 20  // Añadir profundidad gradual
       );
       
       PVector posicionHijo = padre.getPosicion().copy().add(variacion);
+      
       // Asegurar que los elementos no salgan demasiado fuera de la pantalla
       posicionHijo.x = constrain(posicionHijo.x, 50, width-50);
       posicionHijo.y = constrain(posicionHijo.y, 50, height-50);
+      posicionHijo.z = constrain(posicionHijo.z, -200, 200);
       
       ElementoSeguidor hijo = new ElementoSeguidor(
         posicionHijo, 
-        tamano * (0.8 - profundidadActual * 0.1),  // Reducción de tamaño más pronunciada según profundidad
+        tamano * (0.9 - profundidadActual * 0.15),  // Reducción de tamaño más gradual
         colorActual,
         padre,
-        random(0.5, 1.5)  // Delay aleatorio
+        random(0.8, 1.2)  // Delay más controlado
       );
       
       seguidores.add(hijo);

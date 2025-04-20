@@ -6,7 +6,7 @@ class ElementoBase {
   protected float tamano;
   protected ArrayList<ElementoBase> elementosConectados;
   
-  static final float DISTANCIA_MINIMA = 50; // Distancia mínima entre elementos
+  static final float DISTANCIA_MINIMA = 100; // Distancia mínima entre elementos
   static final float FUERZA_REPULSION = 0.5; // Fuerza de repulsión
   
   ElementoBase(PVector posicion, float tamano, color c) {
@@ -50,24 +50,42 @@ class ElementoBase {
   void mostrar() {
     pushMatrix();
     translate(posicion.x, posicion.y, posicion.z);
+    
+    // Habilitar iluminación y transparencia
+    hint(ENABLE_DEPTH_TEST);
     noStroke();
-    fill(colorActual);
+    
+    // Configurar el material para que responda mejor a la luz
+    // Brillo ambiental del material
+    ambient(red(colorActual)/2, green(colorActual)/2, blue(colorActual)/2);
+    // Brillo especular
+    specular(255);
+    shininess(5.0);
+    // Color emisivo del material
+    emissive(red(colorActual)/4, green(colorActual)/4, blue(colorActual)/4);
+    
+    // Dibujar esfera con color actual y alpha
+    fill(colorActual, 220);
     sphere(tamano);
+    
     popMatrix();
   }
   
   void dibujarConexiones() {
+    hint(ENABLE_DEPTH_TEST);
     for (ElementoBase elemento : elementosConectados) {
       stroke(lerpColor(colorActual, elemento.colorActual, 0.5), 150);
-      strokeWeight(.5);
-      line(posicion.x, posicion.y, posicion.z, 
-           elemento.posicion.x, elemento.posicion.y, elemento.posicion.z);
+      strokeWeight(0.5);
+      beginShape(LINES);
+      vertex(posicion.x, posicion.y, posicion.z);
+      vertex(elemento.posicion.x, elemento.posicion.y, elemento.posicion.z);
+      endShape();
     }
   }
   
   void conectarCon(ElementoBase elemento) {
     // Máximo 3 conexiones por elemento
-    if (!elementosConectados.contains(elemento) && elementosConectados.size() < 3) {
+    if (!elementosConectados.contains(elemento) && elementosConectados.size() < 1) {
       elementosConectados.add(elemento);
     }
   }

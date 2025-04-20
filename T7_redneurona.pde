@@ -16,8 +16,8 @@ FondoManager fondoManager;
 boolean mostrarDebug = false;
 
 // Configuración de la red
-int hijosDerivados = 7; // Número de hijos que genera cada elemento
-int nivelProfundidad = 2; // Niveles de profundidad en la red
+int hijosDerivados = 6; // Número de hijos que genera cada elemento
+int nivelProfundidad = 3; // Niveles de profundidad en la red
 
 void setup() {
   size(700, 1100, P3D);
@@ -29,12 +29,24 @@ void setup() {
   fondoManager = new FondoManager();
   
   // Crear elemento principal
-  elementoPrincipal = new ElementoPrincipal(new PVector(width/2, height/2, 0), 20, PRIMARIO);
+  elementoPrincipal = new ElementoPrincipal(new PVector(width/2, height/2, 0), 10, PRIMARIO);
   elementoPrincipal.generarRedNeuronal(hijosDerivados, nivelProfundidad);
+  
+  // Configurar la perspectiva para mejor visualización 3D
+  perspective(PI/3.0, float(width)/float(height), 10, 1000000);
 }
 
 void draw() {
-  // Primero dibujamos el fondo con las imágenes
+  // Limpiar el buffer de profundidad y color
+  background(0);
+  
+  // Guardar la configuración actual de la cámara
+  pushMatrix();
+  
+  // Dibujar el fondo en modo 2D
+  hint(DISABLE_DEPTH_TEST);
+  camera();
+  // Dibujar el fondo con las imágenes
   fondoManager.actualizar(audioManager.getNivelGraves(), audioManager.hayBeatGraves());
   fondoManager.mostrar();
   
@@ -42,11 +54,22 @@ void draw() {
   fill(FONDO, 200);
   rect(0, 0, width, height);
   
+  // Restaurar la configuración 3D
+  hint(ENABLE_DEPTH_TEST);
+  popMatrix();
+  
+  // Configurar la cámara para la escena 3D
+  camera(width/2, height/2 - 100, (height/2) / tan(PI/6), 
+         width/2, height/2, 0, 
+         0, 1, 0);
+  
   // Iluminación
   lights();
-  //ambientLight(40, 40, 40);
-  lightFalloff(1.0, 0.001, 0.0);
-  pointLight(150, 250, 150, 200, 200, 200);
+  //lightFalloff(1.0, 0.001, 0.0);
+  //directionalLight(20, 20, 20, width/2, height/2, 0);
+  pointLight(150, 150, 150, width/2, height/2, 00);
+ //pointLight(51, 102, 126, 140, 160, 144);
+
 
   // Análisis de audio
   audioManager.actualizarAnalisis();
@@ -57,11 +80,7 @@ void draw() {
   }
   
   if (audioManager.hayBeatAgudos()) {
-    // Cambiar color como antes
     elementoPrincipal.cambiarColor(PALETA);
-    
-    // Aplicar un impulso aleatorio a todos los elementos
-    // Reducir la intensidad base y el factor multiplicador para movimientos más suaves
     float intensidadImpulso = 10 + audioManager.getNivelAgudos() * 10.0;
     elementoPrincipal.aplicarImpulsoATodos(intensidadImpulso);
   }
