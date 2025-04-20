@@ -30,26 +30,28 @@ class DebugManager {
     float y = 140;
     
     // Graves
-    text("Graves:", 20, y);
+    text("Graves: "+ nf(audio.getNivelGraves(), 1, 2), 20, y);
     fill(SECUNDARIO);
-    rect(x, y - barHeight, barWidth * audio.getNivelGraves(), barHeight);
-    text(nf(audio.getNivelGraves(), 1, 2), x + barWidth * audio.getNivelGraves() + 5, y);
+    rect(x + 25, y - barHeight, barWidth * audio.getNivelGraves()/100, barHeight);
     
+
+
+
     // Medios
     y += 25;
     fill(TEXTO);
-    text("Medios:", 20, y);
+    text("Medios: "+ nf(audio.getNivelMedios(), 1, 2), 20, y);
     fill(PRIMARIO);
-    rect(x, y - barHeight, barWidth * audio.getNivelMedios(), barHeight);
-    text(nf(audio.getNivelMedios(), 1, 2), x + barWidth * audio.getNivelMedios() + 5, y);
+    rect(x +25, y - barHeight, barWidth * audio.getNivelMedios()/100, barHeight);
+  
     
     // Agudos
     y += 25;
     fill(TEXTO);
-    text("Agudos:", 20, y);
+    text("Agudos: "+nf(audio.getNivelAgudos(), 1, 2), 20, y);
     fill(ACENTO);
-    rect(x, y - barHeight, barWidth * audio.getNivelAgudos(), barHeight);
-    text(nf(audio.getNivelAgudos(), 1, 2), x + barWidth * audio.getNivelAgudos() + 5, y);
+    rect(x + 25, y - barHeight, barWidth * audio.getNivelAgudos()/100, barHeight);
+    
     
     hint(ENABLE_DEPTH_TEST);
     popMatrix();
