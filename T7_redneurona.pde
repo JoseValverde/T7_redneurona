@@ -58,10 +58,20 @@ void draw() {
   hint(ENABLE_DEPTH_TEST);
   popMatrix();
   
-  // Configurar la cámara para la escena 3D
-  camera(width/2, height/2 - 100, (height/2) / tan(PI/6), 
-         width/2, height/2, 0, 
-         0, 1, 0);
+  // Obtener la posición del elemento padre
+  PVector posPadre = elementoPrincipal.getPosicion();
+  
+  // Configurar la cámara para seguir al elemento padre
+  // La cámara se coloca ligeramente por encima y detrás
+  camera(
+      posPadre.x, // X de la cámara sigue al padre
+      posPadre.y - 100, // Y de la cámara un poco más arriba
+      posPadre.z + (height/2) / tan(PI/6), // Z de la cámara a una distancia fija
+      posPadre.x, // Mirar hacia X del padre
+      posPadre.y, // Mirar hacia Y del padre
+      posPadre.z, // Mirar hacia Z del padre
+      0, 1, 0 // Vector "arriba" se mantiene igual
+  );
   
   // Iluminación
   lights();
