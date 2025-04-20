@@ -19,6 +19,11 @@ boolean mostrarDebug = false;
 int hijosDerivados = 6; // Número de hijos que genera cada elemento
 int nivelProfundidad = 3; // Niveles de profundidad en la red
 
+// Variables para el movimiento suave de la cámara
+PVector posicionCamara;
+PVector posicionObjetivoCamara;
+float factorSuavizadoCamara = 0.0000000000009; // Ajusta este valor para cambiar la suavidad del movimiento
+
 void setup() {
   size(700, 1100, P3D);
   smooth();
@@ -34,6 +39,11 @@ void setup() {
   
   // Configurar la perspectiva para mejor visualización 3D
   perspective(PI/3.0, float(width)/float(height), 10, 1000000);
+  
+  // Inicializar posiciones de cámara
+  PVector posInicial = elementoPrincipal.getPosicion();
+  posicionCamara = new PVector(posInicial.x, posInicial.y - 100, posInicial.z + (height/2) / tan(PI/6));
+  posicionObjetivoCamara = posicionCamara.copy();
 }
 
 void draw() {
@@ -61,16 +71,25 @@ void draw() {
   // Obtener la posición del elemento padre
   PVector posPadre = elementoPrincipal.getPosicion();
   
-  // Configurar la cámara para seguir al elemento padre
-  // La cámara se coloca ligeramente por encima y detrás
+  // Actualizar posición objetivo de la cámara
+  posicionObjetivoCamara.set(
+      posPadre.x,
+      posPadre.y - 100,
+      posPadre.z + (height/2) / tan(PI/6)
+  );
+
+  // Interpolar suavemente la posición actual de la cámara
+  posicionCamara.lerp(posicionObjetivoCamara, factorSuavizadoCamara);
+
+  // Configurar la cámara con movimiento suave
   camera(
-      posPadre.x, // X de la cámara sigue al padre
-      posPadre.y - 100, // Y de la cámara un poco más arriba
-      posPadre.z + (height/2) / tan(PI/6), // Z de la cámara a una distancia fija
-      posPadre.x, // Mirar hacia X del padre
-      posPadre.y, // Mirar hacia Y del padre
-      posPadre.z, // Mirar hacia Z del padre
-      0, 1, 0 // Vector "arriba" se mantiene igual
+      posicionCamara.x,
+      posicionCamara.y,
+      posicionCamara.z,
+      posPadre.x, // La vista siempre apunta directamente al padre
+      posPadre.y,
+      posPadre.z,
+      0, 1, 0
   );
   
   // Iluminación
