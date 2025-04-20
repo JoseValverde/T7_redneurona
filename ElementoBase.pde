@@ -6,6 +6,9 @@ class ElementoBase {
   protected float tamano;
   protected ArrayList<ElementoBase> elementosConectados;
   
+  static final float DISTANCIA_MINIMA = 50; // Distancia mínima entre elementos
+  static final float FUERZA_REPULSION = 0.5; // Fuerza de repulsión
+  
   ElementoBase(PVector posicion, float tamano, color c) {
     this.posicion = posicion.copy();
     this.tamano = tamano;
@@ -85,5 +88,22 @@ class ElementoBase {
   
   color getColor() {
     return colorActual;
+  }
+  
+  void mantenerDistancia(ArrayList<ElementoBase> elementos) {
+    for (ElementoBase otro : elementos) {
+      if (otro != this) {
+        PVector direccion = PVector.sub(posicion, otro.posicion);
+        float distancia = direccion.mag();
+        
+        // Si los elementos están más cerca que la distancia mínima
+        if (distancia < DISTANCIA_MINIMA && distancia > 0) {
+          direccion.normalize();
+          float fuerza = (1.0 - distancia/DISTANCIA_MINIMA) * FUERZA_REPULSION;
+          direccion.mult(fuerza);
+          velocidad.add(direccion);
+        }
+      }
+    }
   }
 }

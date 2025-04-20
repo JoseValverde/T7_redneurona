@@ -12,6 +12,7 @@ final color[] PALETA = {PRIMARIO, SECUNDARIO, ACENTO, TEXTO};
 ElementoPrincipal elementoPrincipal;
 AudioManager audioManager;
 DebugManager debugManager;
+FondoManager fondoManager;
 boolean mostrarDebug = false;
 
 // Configuración de la red
@@ -25,6 +26,7 @@ void setup() {
   // Inicializar gestores
   audioManager = new AudioManager(this, "musica/nombre.mp3");
   debugManager = new DebugManager();
+  fondoManager = new FondoManager();
   
   // Crear elemento principal
   elementoPrincipal = new ElementoPrincipal(new PVector(width/2, height/2, 0), 20, PRIMARIO);
@@ -32,12 +34,20 @@ void setup() {
 }
 
 void draw() {
-  background(FONDO);
+  // Primero dibujamos el fondo con las imágenes
+  fondoManager.actualizar(audioManager.getNivelGraves(), audioManager.hayBeatGraves());
+  fondoManager.mostrar();
+  
+  // Aplicar un overlay semitransparente del color de fondo
+  fill(FONDO, 200);
+  rect(0, 0, width, height);
   
   // Iluminación
   lights();
-  ambientLight(40, 40, 40);
-  
+  //ambientLight(40, 40, 40);
+  lightFalloff(1.0, 0.001, 0.0);
+  pointLight(150, 250, 150, 200, 200, 200);
+
   // Análisis de audio
   audioManager.actualizarAnalisis();
   

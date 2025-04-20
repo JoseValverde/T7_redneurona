@@ -132,11 +132,20 @@ class ElementoPrincipal extends ElementoBase {
     // Añadir la fuerza de atracción a la aceleración
     aceleracion.add(direccionCentro);
     
+    // Crear lista con todos los elementos para el distanciamiento
+    ArrayList<ElementoBase> todosElementos = new ArrayList<ElementoBase>();
+    todosElementos.add(this);
+    todosElementos.addAll(seguidores);
+    
+    // Aplicar distanciamiento al elemento principal
+    mantenerDistancia(todosElementos);
+    
     // Llamar al método actualizar de la clase padre
     super.actualizar();
     
-    // Actualizar todos los seguidores
+    // Actualizar todos los seguidores y aplicar distanciamiento
     for (ElementoSeguidor seguidor : seguidores) {
+      seguidor.mantenerDistancia(todosElementos);
       seguidor.actualizar();
     }
   }
