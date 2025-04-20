@@ -33,6 +33,16 @@ class ElementoBase {
     }
   }
   
+  // Método para aplicar un impulso aleatorio al elemento
+  void aplicarImpulsoAleatorio(float intensidad) {
+    // Crear un vector con dirección aleatoria
+    PVector impulso = PVector.random3D();
+    // Escalar el vector según la intensidad deseada
+    impulso.mult(intensidad);
+    // Aplicar el impulso a la velocidad
+    velocidad.add(impulso);
+  }
+  
   void mostrar() {
     pushMatrix();
     translate(posicion.x, posicion.y, posicion.z);

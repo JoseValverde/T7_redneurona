@@ -1,9 +1,11 @@
 class ElementoPrincipal extends ElementoBase {
   private ArrayList<ElementoSeguidor> seguidores;
+  private ArrayList<ElementoSeguidor> ultimoNivel; // Lista para almacenar los elementos del último nivel
   
   ElementoPrincipal(PVector posicion, float tamano, color c) {
     super(posicion, tamano, c);
     seguidores = new ArrayList<ElementoSeguidor>();
+    ultimoNivel = new ArrayList<ElementoSeguidor>(); // Inicializar la lista de último nivel
   }
   
   void cambiarDireccion() {
@@ -17,8 +19,43 @@ class ElementoPrincipal extends ElementoBase {
   }
   
   void generarRedNeuronal(int hijosPorNodo, int profundidad) {
+    // Limpiar la lista de elementos de último nivel si existe previamente
+    ultimoNivel.clear();
+    
     // Crear red neuronal recursivamente
     generarSeguidores(this, hijosPorNodo, profundidad, 0);
+    
+    // Después de generar toda la red, conectar los elementos del último nivel entre sí
+    conectarUltimoNivel();
+  }
+  
+  private void conectarUltimoNivel() {
+    // Si hay menos de 2 elementos en el último nivel, no hay nada que conectar
+    if (ultimoNivel.size() < 2) return;
+    
+    // Conectar cada elemento con algunos otros elementos del mismo nivel
+    for (int i = 0; i < ultimoNivel.size(); i++) {
+      ElementoSeguidor actual = ultimoNivel.get(i);
+      
+      // Conectar con el siguiente (con cierre circular al final)
+      int siguienteIndex = (i + 1) % ultimoNivel.size();
+      ElementoSeguidor siguiente = ultimoNivel.get(siguienteIndex);
+      
+      actual.conectarCon(siguiente);
+      siguiente.conectarCon(actual);
+      
+      // Conectar con un elemento aleatorio diferente (para crear más conexiones)
+      if (ultimoNivel.size() > 2) {
+        int aleatorioIndex;
+        do {
+          aleatorioIndex = int(random(ultimoNivel.size()));
+        } while (aleatorioIndex == i || aleatorioIndex == siguienteIndex);
+        
+        ElementoSeguidor aleatorio = ultimoNivel.get(aleatorioIndex);
+        actual.conectarCon(aleatorio);
+        aleatorio.conectarCon(actual);
+      }
+    }
   }
   
   private void generarSeguidores(ElementoBase padre, int hijosPorNodo, int profundidadMax, int profundidadActual) {
@@ -27,6 +64,9 @@ class ElementoPrincipal extends ElementoBase {
     // Calcular separación base según el nivel de profundidad
     // Más separación en los niveles superiores, menos en los niveles profundos
     float separacionBase = 100 + (profundidadMax - profundidadActual) * 50;
+    
+    // Flag para saber si estamos en el último nivel de profundidad
+    boolean esUltimoNivel = (profundidadActual == profundidadMax - 1);
     
     for (int i = 0; i < hijosPorNodo; i++) {
       // Distribuir los hijos de forma más uniforme usando ángulos
@@ -57,8 +97,24 @@ class ElementoPrincipal extends ElementoBase {
       padre.conectarCon(hijo);
       hijo.conectarCon(padre);
       
+      // Si es el último nivel, añadir el elemento a la lista de último nivel
+      if (esUltimoNivel) {
+        ultimoNivel.add(hijo);
+      }
+      
       // Recursivamente generar hijos para este seguidor
       generarSeguidores(hijo, hijosPorNodo, profundidadMax, profundidadActual + 1);
+    }
+  }
+  
+  // Método para aplicar impulso aleatorio a todos los elementos cuando hay un beat agudo
+  void aplicarImpulsoATodos(float intensidad) {
+    // Aplicar impulso al elemento principal
+    aplicarImpulsoAleatorio(intensidad);
+    
+    // Aplicar impulso a todos los seguidores
+    for (ElementoSeguidor seguidor : seguidores) {
+      seguidor.aplicarImpulsoAleatorio(intensidad);
     }
   }
   

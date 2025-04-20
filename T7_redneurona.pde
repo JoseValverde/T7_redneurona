@@ -47,7 +47,13 @@ void draw() {
   }
   
   if (audioManager.hayBeatAgudos()) {
+    // Cambiar color como antes
     elementoPrincipal.cambiarColor(PALETA);
+    
+    // Aplicar un impulso aleatorio a todos los elementos
+    // Intensidad proporcional al nivel de agudos para efecto más dinámico
+    float intensidadImpulso = 0.8 + audioManager.getNivelAgudos() * 2.0;
+    elementoPrincipal.aplicarImpulsoATodos(intensidadImpulso);
   }
   
   // Actualizar y dibujar elementos
