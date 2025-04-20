@@ -22,19 +22,30 @@ int nivelProfundidad = 3; // Niveles de profundidad en la red
 // Variables para el movimiento suave de la cámara
 PVector posicionCamara;
 PVector posicionObjetivoCamara;
-float factorSuavizadoCamara = 0.0000000000009; // Ajusta este valor para cambiar la suavidad del movimiento
+float factorSuavizadoCamara = 0.05; // Ajusta este valor para cambiar la suavidad del movimiento
+
+// Añadir después de las variables de la cámara
+float anguloRotacionCamara = 0;  // Ángulo actual de rotación
+float velocidadRotacion = 0.005;  // Velocidad de rotación (ajustar según necesidad)
+float distanciaCamara = 4000;     // Distancia de la cámara al elemento
+
+// Variables para la oscilación de la distancia de la cámara
+float distanciaCamaraMin = 400;
+float distanciaCamaraMax = 1000;
+float anguloOscilacionDistancia = 0;
+float velocidadOscilacionDistancia = 0.01; // Ajustar para cambiar la velocidad de la oscilación
 
 void setup() {
   size(700, 1100, P3D);
-  smooth();
+  smooth(8);
   
   // Inicializar gestores
   audioManager = new AudioManager(this, "musica/nombre.mp3");
   debugManager = new DebugManager();
   fondoManager = new FondoManager();
   
-  // Crear elemento principal
-  elementoPrincipal = new ElementoPrincipal(new PVector(width/2, height/2, 0), 10, PRIMARIO);
+  // Crear elemento principal (tamño y color inicial)
+  elementoPrincipal = new ElementoPrincipal(new PVector(width/2, height/2, 0), 4, PRIMARIO);
   elementoPrincipal.generarRedNeuronal(hijosDerivados, nivelProfundidad);
   
   // Configurar la perspectiva para mejor visualización 3D
@@ -68,18 +79,24 @@ void draw() {
   hint(ENABLE_DEPTH_TEST);
   popMatrix();
   
+  // Reemplazar la sección de actualización de la cámara
   // Obtener la posición del elemento padre
   PVector posPadre = elementoPrincipal.getPosicion();
-  
+
+  // Actualizar la distancia de la cámara
+  distanciaCamara = map(sin(anguloOscilacionDistancia), -1, 1, distanciaCamaraMin, distanciaCamaraMax);
+  anguloOscilacionDistancia += velocidadOscilacionDistancia;
+
+  // Calcular la nueva posición de la cámara en rotación
+  float camX = posPadre.x + cos(anguloRotacionCamara) * distanciaCamara;
+  float camY = posPadre.y - 100; // Mantener altura fija
+  float camZ = posPadre.z + sin(anguloRotacionCamara) * distanciaCamara;
+
   // Actualizar posición objetivo de la cámara
-  posicionObjetivoCamara.set(
-      posPadre.x,
-      posPadre.y - 100,
-      posPadre.z + (height/2) / tan(PI/6)
-  );
+  posicionObjetivoCamara.set(camX, camY, camZ);
 
   // Interpolar suavemente la posición actual de la cámara
-  posicionCamara.lerp(posicionObjetivoCamara, factorSuavizadoCamara);
+  posicionCamara.lerp(posicionObjetivoCamara, 0.02);
 
   // Configurar la cámara con movimiento suave
   camera(
@@ -91,13 +108,16 @@ void draw() {
       posPadre.z,
       0, 1, 0
   );
+
+  // Actualizar el ángulo de rotación
+  anguloRotacionCamara += velocidadRotacion;
   
   // Iluminación
   lights();
-  //lightFalloff(1.0, 0.001, 0.0);
-  //directionalLight(20, 20, 20, width/2, height/2, 0);
-  pointLight(150, 150, 150, width/2, height/2, 00);
- //pointLight(51, 102, 126, 140, 160, 144);
+  lightFalloff(1.0, 0.01, 0.01);
+  directionalLight(20, 20, 20, width/2, height/2, 0);
+  //pointLight(150, 150, 150, width/2, height/2, 00);
+ pointLight(51, 102, 126, 140, 160, 144);
 
 
   // Análisis de audio

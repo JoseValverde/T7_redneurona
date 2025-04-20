@@ -57,6 +57,6 @@ class ElementoSeguidor extends ElementoBase {
     // Mantener dentro de los límites
     posicion.x = constrain(posicion.x, 0, width);
     posicion.y = constrain(posicion.y, 0, height);
-    posicion.z = constrain(posicion.z, -200, 200);
+    posicion.z = constrain(posicion.z, -400, 400);
   }
 }

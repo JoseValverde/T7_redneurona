@@ -10,11 +10,11 @@ class ElementoPrincipal extends ElementoBase {
   
   void cambiarDireccion() {
     // Cambiar dirección aleatoriamente cuando hay un sonido grave
-    float amplitud = 0.15; // Reducir la amplitud de 0.3 a 0.15 para movimientos más suaves
+    float amplitud = 0.005; // Esta amplitud controla la fuerza del movimiento
     aceleracion = new PVector(
-      random(-amplitud, amplitud), 
-      random(-amplitud, amplitud), 
-      random(-amplitud, amplitud)
+        random(-amplitud, amplitud), 
+        random(-amplitud, amplitud), 
+        random(-amplitud, amplitud)
     );
   }
   
@@ -133,7 +133,7 @@ class ElementoPrincipal extends ElementoBase {
     // Aplicar fuerza hacia el centro con intensidad proporcional a la distancia
     float distancia = direccionCentro.mag();
     direccionCentro.normalize();
-    direccionCentro.mult(distancia * 0.001); // Factor de atracción suave
+    direccionCentro.mult(distancia * 0.0001); // Factor de atracción suave
     
     // Añadir la fuerza de atracción a la aceleración
     aceleracion.add(direccionCentro);
