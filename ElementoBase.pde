@@ -11,14 +11,15 @@ class ElementoBase {
     this.tamano = tamano;
     this.colorActual = c;
     this.velocidad = new PVector(0, 0, 0);
-    this.aceleracion = new PVector(random(-0.1, 0.1), random(-0.1, 0.1), random(-0.1, 0.1));
+    this.aceleracion = new PVector(random(-1, 1), random(-1, 1), random(-1, 1));
+    //this.aceleracion = new PVector(random(-0.1, 0.1), random(-0.1, 0.1), random(-0.1, 0.1));
     this.elementosConectados = new ArrayList<ElementoBase>();
   }
   
   void actualizar() {
     // Física básica: actualizar velocidad y posición
     velocidad.add(aceleracion);
-    velocidad.limit(3);  // Limitar velocidad máxima
+    velocidad.limit(3);  // Reducir límite de velocidad máxima de 5 a 3
     posicion.add(velocidad);
     
     // Rebote en los bordes
@@ -55,7 +56,7 @@ class ElementoBase {
   void dibujarConexiones() {
     for (ElementoBase elemento : elementosConectados) {
       stroke(lerpColor(colorActual, elemento.colorActual, 0.5), 150);
-      strokeWeight(1);
+      strokeWeight(.5);
       line(posicion.x, posicion.y, posicion.z, 
            elemento.posicion.x, elemento.posicion.y, elemento.posicion.z);
     }

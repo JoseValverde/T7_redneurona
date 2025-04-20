@@ -15,8 +15,8 @@ DebugManager debugManager;
 boolean mostrarDebug = false;
 
 // Configuración de la red
-int hijosDerivados = 3; // Número de hijos que genera cada elemento
-int nivelProfundidad = 3; // Niveles de profundidad en la red
+int hijosDerivados = 7; // Número de hijos que genera cada elemento
+int nivelProfundidad = 2; // Niveles de profundidad en la red
 
 void setup() {
   size(700, 1100, P3D);
@@ -51,8 +51,8 @@ void draw() {
     elementoPrincipal.cambiarColor(PALETA);
     
     // Aplicar un impulso aleatorio a todos los elementos
-    // Intensidad proporcional al nivel de agudos para efecto más dinámico
-    float intensidadImpulso = 0.8 + audioManager.getNivelAgudos() * 2.0;
+    // Reducir la intensidad base y el factor multiplicador para movimientos más suaves
+    float intensidadImpulso = 10 + audioManager.getNivelAgudos() * 10.0;
     elementoPrincipal.aplicarImpulsoATodos(intensidadImpulso);
   }
   

@@ -10,7 +10,7 @@ class ElementoPrincipal extends ElementoBase {
   
   void cambiarDireccion() {
     // Cambiar dirección aleatoriamente cuando hay un sonido grave
-    float amplitud = 0.3;
+    float amplitud = 0.15; // Reducir la amplitud de 0.3 a 0.15 para movimientos más suaves
     aceleracion = new PVector(
       random(-amplitud, amplitud), 
       random(-amplitud, amplitud), 
@@ -63,7 +63,7 @@ class ElementoPrincipal extends ElementoBase {
     
     // Calcular separación base según el nivel de profundidad
     // Más separación en los niveles superiores, menos en los niveles profundos
-    float separacionBase = 100 + (profundidadMax - profundidadActual) * 50;
+    float separacionBase = 200 + (profundidadMax - profundidadActual) * 50;
     
     // Flag para saber si estamos en el último nivel de profundidad
     boolean esUltimoNivel = (profundidadActual == profundidadMax - 1);
@@ -120,6 +120,19 @@ class ElementoPrincipal extends ElementoBase {
   
   @Override
   void actualizar() {
+    // Calcular vector hacia el centro
+    PVector centro = new PVector(width/2, height/2, 0);
+    PVector direccionCentro = PVector.sub(centro, posicion);
+    
+    // Aplicar fuerza hacia el centro con intensidad proporcional a la distancia
+    float distancia = direccionCentro.mag();
+    direccionCentro.normalize();
+    direccionCentro.mult(distancia * 0.001); // Factor de atracción suave
+    
+    // Añadir la fuerza de atracción a la aceleración
+    aceleracion.add(direccionCentro);
+    
+    // Llamar al método actualizar de la clase padre
     super.actualizar();
     
     // Actualizar todos los seguidores
